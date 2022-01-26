@@ -20,20 +20,20 @@ let window
      window.loadFile('src/ui/index.html')
  }
 
- ipcMain.on("toMain", (event, args) => {
-     console.log('inMain')
-    // fs.readFile("path/to/file", (error, data) => {
-    //   // Do something with file contents
+//  ipcMain.on("toMain", (event, args) => {
+//      console.log('inMain')
+//     // fs.readFile("path/to/file", (error, data) => {
+//     //   // Do something with file contents
   
-    //   // Send result back to renderer process
-    //   window.webContents.send("fromMain", responseObj);
-    // });
-     const responseObj = {
-         hola:'Hola'
-     }
+//     //   // Send result back to renderer process
+//     //   window.webContents.send("fromMain", responseObj);
+//     // });
+//      const responseObj = {
+//          hola:'Hola'
+//      }
 
-    window.webContents.send("fromMain", responseObj);
-  });
+//     window.webContents.send("fromMain", responseObj);
+//   });
 
   ipcMain.on("openFile", async (event, args) => {
    const resp = await dialog.showOpenDialog({filters: [ { name: 'Hoja de calculo', extensions: ['xlsx'] },]})
@@ -41,7 +41,7 @@ let window
    if(resp.filePaths.length === 0 ){
         console.log("No se selecciono un archivo")
    } else {
-       fileToJson(resp.filePaths[0])
+       fileToJson(resp.filePaths[0],window)
    }
 //    window.webContents.send("fromMain", resp);
  });

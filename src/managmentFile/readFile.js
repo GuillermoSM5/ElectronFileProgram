@@ -1,12 +1,23 @@
 const xlsx = require("xlsx-js-style");
-const {dialog} = require('electron')
+const {dialog,ipcMain} = require('electron')
 const { findGEID } = require("./utils");
 
-const fileToJson = async (path)=>{
+const fileToJson = async (path,window)=>{
     const sheet = xlsx.readFile(path);
     const content = sheet.Sheets["report"];
     const data = xlsx.utils.sheet_to_json(content);
+
+  if(data.length === 0){
+   
+        const responseObj = {
+            txt:'Elija un archivo con el formato correspondiente'
+        }
+        
+       window.webContents.send("alertWrongFormat", responseObj);
     
+      return
+  }
+
     const newData = data.map(function (ref) {
         return findGEID(ref);
       });
@@ -147,7 +158,12 @@ const fileToJson = async (path)=>{
       
       xlsx.utils.book_append_sheet(newFile, newSheet, "New Data");
       const resp = await dialog.showSaveDialog({defaultPath:'.xlsx', filters: [ { name: 'Hoja de calculo', extensions: ['xlsx'] },]});
-      xlsx.writeFile(newFile, resp.filePath);
+      
+      if(resp.filePath === ''){
+          return
+      } else{
+          xlsx.writeFile(newFile, resp.filePath);
+      }
 }
 module.exports = {
     fileToJson
